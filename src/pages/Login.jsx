@@ -2,8 +2,7 @@ import axios from "axios";
 import React, { useContext, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Link, Navigate } from "react-router-dom";
-import { Context } from "../main";
-import baseUrl from "../config";
+import { Context, server } from "../main";
 
 const Login = () => {
   const { isAuthenticated, setIsAuthenticated, loading, setLoading } =
@@ -14,23 +13,29 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const { data } = await axios.post(
-        `${baseUrl}/users/login`,
-        { email, password },
+        `${server}/users/login`,
         {
-          headers: { "Content-Type": "application/json" },
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
           withCredentials: true,
         }
       );
+
       toast.success(data.message);
       setIsAuthenticated(true);
       setLoading(false);
     } catch (error) {
       toast.error(error.response.data.message);
-      console.log(error);
-      setIsAuthenticated(false);
       setLoading(false);
+      setIsAuthenticated(false);
     }
   };
 
@@ -49,8 +54,8 @@ const Login = () => {
           />
           <input
             type="password"
-            placeholder="Password"
             required
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -64,6 +69,5 @@ const Login = () => {
     </div>
   );
 };
-
 
 export default Login;

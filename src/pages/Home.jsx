@@ -1,10 +1,9 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { Context, server } from "../main";
 import { toast } from "react-hot-toast";
-import { Navigate } from "react-router-dom";
 import TodoItem from "../components/TodoItem";
-import baseUrl from "../config";
-import { Context } from "../main";
+import { Navigate } from "react-router-dom";
 
 const Home = () => {
   const [title, setTitle] = useState("");
@@ -12,31 +11,33 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [refresh, setRefresh] = useState(false);
+
   const { isAuthenticated } = useContext(Context);
 
   const updateHandler = async (id) => {
     try {
       const { data } = await axios.put(
-        `${baseUrl}/task/${id}`,
+        `${server}/task/${id}`,
         {},
         {
           withCredentials: true,
         }
       );
+
       toast.success(data.message);
-      setRefresh(prev=> !prev)
+      setRefresh((prev) => !prev);
     } catch (error) {
       toast.error(error.response.data.message);
     }
   };
-
   const deleteHandler = async (id) => {
     try {
-      const { data } = await axios.delete(`${baseUrl}/task/${id}`, {
+      const { data } = await axios.delete(`${server}/task/${id}`, {
         withCredentials: true,
       });
+
       toast.success(data.message);
-      setRefresh(prev=> !prev)
+      setRefresh((prev) => !prev);
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -44,17 +45,19 @@ const Home = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
+      setLoading(true);
       const { data } = await axios.post(
-        `${baseUrl}/task/new`,
+        `${server}/task/new`,
         {
           title,
           description,
         },
         {
           withCredentials: true,
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -62,7 +65,7 @@ const Home = () => {
       setDescription("");
       toast.success(data.message);
       setLoading(false);
-      setRefresh(prev=> !prev)
+      setRefresh((prev) => !prev);
     } catch (error) {
       toast.error(error.response.data.message);
       setLoading(false);
@@ -71,14 +74,14 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get(`${baseUrl}/task/my`, {
+      .get(`${server}/task/my`, {
         withCredentials: true,
       })
       .then((res) => {
         setTasks(res.data.tasks);
       })
-      .catch((error) => {
-        toast.error(error.response.data.message);
+      .catch((e) => {
+        toast.error(e.response.data.message);
       });
   }, [refresh]);
 
@@ -90,25 +93,27 @@ const Home = () => {
         <section>
           <form onSubmit={submitHandler}>
             <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
               type="text"
               placeholder="Title"
               required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
             <input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
               type="text"
               placeholder="Description"
               required
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
+
             <button disabled={loading} type="submit">
               Add Task
             </button>
           </form>
         </section>
       </div>
+
       <section className="todosContainer">
         {tasks.map((i) => (
           <TodoItem

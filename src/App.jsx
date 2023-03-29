@@ -1,22 +1,21 @@
-import axios from "axios";
-import { useContext, useEffect } from "react";
-import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Header } from "./components/Header";
-import baseUrl from "./config";
-import { Context } from "./main";
+import Header from "./components/Header";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
+import { Toaster } from "react-hot-toast";
+import { useContext, useEffect } from "react";
+import axios from "axios";
+import { Context, server } from "./main";
 
 function App() {
-  const { setIsAuthenticated, setUser, setLoading } = useContext(Context);
+  const { setUser, setIsAuthenticated, setLoading } = useContext(Context);
 
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`${baseUrl}/users/me`, {
+      .get(`${server}/users/me`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -24,7 +23,7 @@ function App() {
         setIsAuthenticated(true);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((error) => {
         setUser({});
         setIsAuthenticated(false);
         setLoading(false);
@@ -33,12 +32,12 @@ function App() {
 
   return (
     <Router>
-      <Header></Header>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/Register" element={<Register />} />
       </Routes>
       <Toaster />
     </Router>

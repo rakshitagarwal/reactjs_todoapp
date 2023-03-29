@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
-import Loader from "../components/Loader";
 import { Context } from "../main";
+import Loader from "../components/Loader";
 
 const Profile = () => {
   const { isAuthenticated, loading, user } = useContext(Context);
-  console.log(user);
 
   return loading ? (
     <Loader />
